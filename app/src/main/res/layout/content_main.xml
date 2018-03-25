@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        app:srcCompat="@drawable/gridbackground" />
+
+    <ImageButton
+        android:id="@+id/grid0_2"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_alignTop="@+id/grid1_2"
+        android:layout_toLeftOf="@+id/scoreText"
+        android:layout_toStartOf="@+id/scoreText"
+        android:background="@null"
+        android:onClick="changeGrid"
+        android:scaleType="fitXY"
+        android:tag="0_2" />
+
+
+    <ImageButton
+        android:id="@+id/grid1_2"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_alignLeft="@+id/grid1_1"
+        android:layout_alignStart="@+id/grid1_1"
+        android:layout_below="@+id/grid1_1"
+        android:layout_marginTop="16dp"
+        android:background="@null"
+        android:onClick="changeGrid"
+        android:scaleType="fitXY"
+        android:tag="1_2" />
+
+    <ImageButton
+        android:id="@+id/grid1_0"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_above="@+id/grid1_1"
+        android:layout_alignLeft="@+id/grid1_1"
+        android:layout_alignStart="@+id/grid1_1"
+        android:layout_marginBottom="18dp"
+        android:background="@null"
+        android:onClick="changeGrid"
+        android:scaleType="fitXY"
+        android:tag="1_0" />
+
+    <ImageButton
+        android:id="@+id/grid0_1"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/scoreText"
+        android:layout_toStartOf="@+id/scoreText"
+        android:background="@null"
+        android:onClick="changeGrid"
+        android:scaleType="fitXY"
+        android:tag="0_1" />
+
+    <ImageButton
+        android:id="@+id/grid2_1"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_alignTop="@+id/grid1_1"
+        android:layout_toEndOf="@+id/scoreText"
+        android:layout_toRightOf="@+id/scoreText"
+        android:background="@null"
+        android:onClick="changeGrid"
+        android:scaleType="fitXY"
+        android:tag="2_1" />
+
+    <ImageButton
+        android:id="@+id/grid2_2"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_alignTop="@+id/grid1_2"
+        android:layout_toEndOf="@+id/scoreText"
+        android:layout_toRightOf="@+id/scoreText"
+        android:background="@null"
+        android:onClick="changeGrid"
+        android:scaleType="fitXY"
+        android:tag="2_2" />
+
+    <ImageButton
+        android:id="@+id/grid2_0"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_alignTop="@+id/grid1_0"
+        android:layout_toEndOf="@+id/scoreText"
+        android:layout_toRightOf="@+id/scoreText"
+        android:background="@null"
+        android:onClick="changeGrid"
+        android:scaleType="fitXY"
+        android:tag="2_0" />
+
+    <ImageButton
+        android:id="@+id/grid0_0"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_alignLeft="@+id/grid0_1"
+        android:layout_alignStart="@+id/grid0_1"
+        android:layout_alignTop="@+id/grid1_0"
+        android:background="@null"
+        android:onClick="changeGrid"
+        android:scaleType="fitXY"
+        android:tag="0_0" />
+
+    <ImageButton
+        android:scaleType="fitXY"
+        android:onClick="changeGrid"
+        android:tag="1_1"
+        android:id="@+id/grid1_1"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_margin="15dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:background="@null" />
+
+    <TextView
+        android:id="@+id/scoreText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp"
+        android:text="X To Start"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
+
+</RelativeLayout>
