@@ -15,11 +15,11 @@ public class Grid {
     }
 
     public void setX(int x, int y) {
-        grid[y][x] = X;
+        grid[x][y] = X;
     }
 
     public void setO(int x, int y) {
-        grid[y][x] = O;
+        grid[x][y] = O;
     }
 
     public void clear() {

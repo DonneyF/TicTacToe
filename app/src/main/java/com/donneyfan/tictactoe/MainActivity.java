@@ -19,8 +19,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 public class MainActivity extends AppCompatActivity {
-    private GridView gridView;
-    private GridViewAdapter gridAdapter;
 
     // Matrix to keep track of current state
     private Grid grid;
@@ -35,10 +33,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        gridView = (GridView) findViewById(R.id.gridView);
-        gridAdapter = new GridViewAdapter(this, R.layout.grid_layout, getData());
-        gridView.setAdapter(gridAdapter);
 
         grid = new Grid();
 
@@ -75,35 +69,25 @@ public class MainActivity extends AppCompatActivity {
                 Drawable d = Drawable.createFromStream(stream, null);
                 imageButtons.get(x).get(y).setImageDrawable(d);
                 grid.setX(x, y);
-                turn = Grid.O;
             } else if (turn == Grid.O) {
                 InputStream stream = getAssets().open("O.png");
                 Drawable d = Drawable.createFromStream(stream, null);
                 imageButtons.get(x).get(y).setImageDrawable(d);
                 grid.setO(x, y);
-                turn = Grid.X;
             }
         } catch (IOException e){
             e.printStackTrace();
         }
 
-
-        if (checkWin(Grid.X) == Grid.X) {
-            message.setText("X wins!");
-        } /*else if (checkWin(Grid.O) == Grid.O){
-            message.setText("O has won! Tap to start a new game");
-        }*/
-    }
-
-    // Prepare some dummy data for gridview
-    private ArrayList<ImageItem> getData() {
-        final ArrayList<ImageItem> imageItems = new ArrayList<>();
-        TypedArray imgs = getResources().obtainTypedArray(R.array.image_ids);
-        for (int i = 0; i < imgs.length(); i++) {
-            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), imgs.getResourceId(i, -1));
-            imageItems.add(new ImageItem(bitmap, "Image#" + i));
+        // Check for win condition
+        if (checkWin(turn) == turn) {
+            if (turn == Grid.O) message.setText("O wins!");
+            else message.setText("X wins!");
         }
-        return imageItems;
+
+        // Change turns
+        if (turn == Grid.X) turn = Grid.O;
+        else turn = Grid.X;
     }
 
     /**
@@ -111,69 +95,49 @@ public class MainActivity extends AppCompatActivity {
      * @return 1 if X wins, 2 if O wins, 0 otherwise.
      */
     private int checkWin(int player){
+        boolean win = false;
 
-        // Assume a win is here. Check otherwise.
-        boolean win = true;
-
-        // Check horizontal wins
-        for (int i = 0; i < 3; i++){
-            if (grid.getCoord(0, i) == 0) continue;
+        // Check Horizontal
+        for (int i = 0; i < 3; i++) {
+            if (grid.getCoord(i, 0) != player) continue;
             for (int j = 1; j < 3; j++){
-                if (grid.getCoord(i, j) != grid.getCoord(i, j - 1)) {
-                    win = false;
-                    break;
-                }
+                // Next element in the row must match the previous row element as well as the right value.
+                win = grid.getCoord(i, j) == grid.getCoord(i, j - 1) && grid.getCoord(i, j) == player;
+                // Stop checking for a win if we hit a false
+                if (!win) break;
             }
-        }
-        if (win) return player;
-
-        return 0;
-
-/*        // Check horizontal wins
-        win = true;
-        for (int j = 0; j < 3; j++){
-            for (int i = 1; i < 3; i++){
-                if (grid.getCoord(i, j) != grid.getCoord(i - 1, j) || grid.getCoord(i, j) != player) {
-                    win = false;
-                    break;
-                }
-            }
+            // Check if the current row has a win
             if (win) return player;
         }
 
-
-        // Check vertical wins
-
-        for (int j = 0; j < 3; j++){
-            count = 0;
-            for (int i = 0; i < 3; i++){
-                count += grid.getCoord(i, j);
+        // Check Vertical
+        for (int i = 0; i < 3; i++) {
+            if (grid.getCoord(0, i) != player) continue;
+            for (int j = 1; j < 3; j++){
+                // The next element in the column must match the previous column element as well as the right value
+                win = grid.getCoord(j, i) == grid.getCoord(j - 1, i) && grid.getCoord(j, i) == player;
+                // Stop checking for a win if we hit a false
+                if (!win) break;
             }
-        }*/
-
-/*        if (count == 3) return Grid.X;
-        if (count == 6) return Grid.O;
-
-        count = 0;
-        // Check main diagonal win
-        for (int i = 0; i < 3; i++){
-            count += grid.getCoord(i, i);
+            // Check if the current column has a win
+            if (win) return player;
         }
 
-        if (count == 3) return Grid.X;
-        if (count == 6) return Grid.O;
-
-        // Check other diagonal wins
-        for (int i = 2; i >= 0; i--){
-            count = 0;
-            for (int j = 0; j < 3; j++){
-                count += grid.getCoord(i, j);
-            }
+        // Check main diagonal
+        for (int i = 1; i < 3; i++){
+            if (grid.getCoord(i - 1,  i - 1) != player) break;
+            win = grid.getCoord(i, i) == grid.getCoord(i - 1, i - 1) && grid.getCoord(i, i) == player;
         }
+        if (win) return player;
 
-        if (count == 3) return Grid.X;
-        if (count == 6) return Grid.O;
+        // Check the anti-diagonal
+        for (int i = 1, j = 1; i < 3 && j >= 0; i++, j--){
+            if (grid.getCoord(i - 1, j + 1) != player) break;
+            win = grid.getCoord(i, j) == grid.getCoord(i - 1, j + 1) && grid.getCoord(i, j) == player;
+        }
+        if (win) return player;
 
-        return 0;*/
+        // Return 0 if no win
+        return 0;
     }
 }
