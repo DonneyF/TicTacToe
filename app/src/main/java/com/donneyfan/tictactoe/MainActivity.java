@@ -71,10 +71,6 @@ public class MainActivity extends AppCompatActivity {
         // Do not allow overwrites
         if (!grid.getCoord(x, y).isEmpty()) return;
 
-        if (ai != null) {
-            ai.updateLastMove(new int[]{x, y});
-        }
-
         try {
             if (turn.equals(Grid.X) && !winState) {
                 InputStream stream = getAssets().open("X.png");
@@ -88,73 +84,41 @@ public class MainActivity extends AppCompatActivity {
                 grid.setO(x, y);
             }
 
-            if (ai != null) ai.playMove();
+            // If the AI is initialized, play its move
+            if (ai != null) {
+                int[] aiMove = ai.playMove(grid);
+                x = aiMove[0];
+                y = aiMove[1];
+
+                if (ai.player.equals(Grid.X) && !winState) {
+                    InputStream stream = getAssets().open("X.png");
+                    Drawable d = Drawable.createFromStream(stream, null);
+                    imageButtons.get(x).get(y).setImageDrawable(d);
+                    grid.setX(x, y);
+                } else if (ai.player.equals(Grid.O) && !winState) {
+                    InputStream stream = getAssets().open("O.png");
+                    Drawable d = Drawable.createFromStream(stream, null);
+                    imageButtons.get(x).get(y).setImageDrawable(d);
+                    grid.setO(x, y);
+                }
+            }
         } catch (Exception e){
             e.printStackTrace();
         }
 
         // Check for win condition
-        if (checkWin(turn).equals(turn)) {
+        if (Grid.checkWin(grid, turn).equals(turn)) {
             if (turn.equals(Grid.O)) message.setText("O wins!");
             else message.setText("X wins!");
             winState = true;
             return;
         }
 
-        // Change turns
-        if (turn.equals(Grid.X)) turn = Grid.O;
-        else turn = Grid.X;
-    }
-
-    /**
-     * Checks the grid for a win
-     * @return 1 if X wins, 2 if O wins, 0 otherwise.
-     */
-    private String checkWin(String player){
-        boolean win = false;
-
-        // Check Horizontal
-        for (int i = 0; i < 3; i++) {
-            if (!grid.getCoord(i, 0).equals(player)) continue;
-            for (int j = 1; j < 3; j++){
-                // Next element in the row must match the previous row element as well as the right value.
-                win = grid.getCoord(i, j).equals(grid.getCoord(i, j - 1)) && grid.getCoord(i, j).equals(player);
-                // Stop checking for a win if we hit a false
-                if (!win) break;
-            }
-            // Check if the current row has a win
-            if (win) return player;
+        // Change turns if AI is not playing
+        if (ai == null) {
+            if (turn.equals(Grid.X)) turn = Grid.O;
+            else turn = Grid.X;
         }
-
-        // Check Vertical
-        for (int i = 0; i < 3; i++) {
-            if (!grid.getCoord(0, i).equals(player)) continue;
-            for (int j = 1; j < 3; j++){
-                // The next element in the column must match the previous column element as well as the right value
-                win = grid.getCoord(j, i).equals(grid.getCoord(j - 1, i)) && grid.getCoord(j, i).equals(player);
-                // Stop checking for a win if we hit a false
-                if (!win) break;
-            }
-            // Check if the current column has a win
-            if (win) return player;
-        }
-
-        // Check main diagonal
-        for (int i = 1; i < 3; i++){
-            if (!grid.getCoord(i - 1,  i - 1).equals(player)) break;
-            win = grid.getCoord(i, i).equals(grid.getCoord(i - 1, i - 1)) && grid.getCoord(i, i).equals(player);
-        }
-        if (win) return player;
-
-        // Check the anti-diagonal
-        for (int i = 1, j = 1; i < 3 && j >= 0; i++, j--){
-            if (!grid.getCoord(i - 1, j + 1).equals(player)) break;
-            win = grid.getCoord(i, j).equals(grid.getCoord(i - 1, j + 1)) && grid.getCoord(i, j).equals(player);
-        }
-        if (win) return player;
-
-        // Return blank if no win
-        return "";
     }
 
     public void newGame(View view){
@@ -183,6 +147,12 @@ public class MainActivity extends AppCompatActivity {
         int randomNum = rand.nextInt(1);
         String aiPlayer = randomNum == 0 ? Grid.X : Grid.O;
 
+        if (aiPlayer.equals(Grid.X)) {
+            view.setTag("1_1");
+            turn = Grid.X;
+            changeGrid(view);
+            message.setText("AI is playing as X");
+        } else message.setText("AI is playing as O");
         ai = new TicTacToeAI(aiPlayer, grid);
     }
 }
