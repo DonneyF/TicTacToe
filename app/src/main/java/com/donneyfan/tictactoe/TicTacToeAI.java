@@ -27,7 +27,7 @@ public class TicTacToeAI {
     }
 
     public void playMove() {
-        if (player == Grid.X) {
+        if (player.equals(Grid.X)) {
             // Always start with X in the center
 
             if (grid.getCoord(1, 1).isEmpty()) {
