@@ -6,12 +6,12 @@ package com.donneyfan.tictactoe;
 
 public class Grid {
 
-    private int[][] grid;
-    public static final int X = 1;
-    public static final int O = 2;
+    private String[][] grid;
+    public static final String X = "X";
+    public static final String O = "O";
 
     public Grid() {
-        grid = new int[][]{{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
+        grid = new String[][]{{"", "", ""}, {"", "", ""}, {"", "", ""}};
     }
 
     public void setX(int x, int y) {
@@ -23,10 +23,10 @@ public class Grid {
     }
 
     public void clear() {
-        grid = new int[][]{{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
+        grid = new String[][]{{"", "", ""}, {"", "", ""}, {"", "", ""}};
     }
 
-    public int getCoord(int x, int y) {
+    public String getCoord(int x, int y) {
         return grid[x][y];
     }
 }

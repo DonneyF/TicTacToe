@@ -2,19 +2,23 @@ package com.donneyfan.tictactoe;
 
 public class TicTacToeAI {
 
-    Grid grid;
-    int player;
-    int[] lastPlayerMove;
+    private Grid grid;
+    private String player;
+    private int[] lastPlayerMove;
 
-    public TicTacToeAI(int player, Grid grid) {
+    public TicTacToeAI(String player, Grid grid) {
         this.player = player;
         this.grid = grid;
     }
 
-    public void setLastMove(int[] lastPlayerMove) {
+    public void updateLastMove(int[] lastPlayerMove) {
         this.lastPlayerMove = lastPlayerMove;
     }
 
+    /**
+     * Determines if the opposing player played a move on one of the non-corner, non center spaces
+     * @return
+     */
     private boolean playerPlayedEdge() {
         return lastPlayerMove == new int[]{0, 1}
                 || lastPlayerMove == new int[]{1, 0}
@@ -26,7 +30,7 @@ public class TicTacToeAI {
         if (player == Grid.X) {
             // Always start with X in the center
 
-            if (grid.getCoord(1, 1) == 0) {
+            if (grid.getCoord(1, 1).isEmpty()) {
                 grid.setX(1, 1);
                 return;
             }

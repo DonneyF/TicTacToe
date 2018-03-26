@@ -23,8 +23,8 @@ public class MainActivity extends AppCompatActivity {
 
     // Matrix to keep track of current state
     private Grid grid;
-    // Integer to track the current turn
-    private int turn;
+    // Track the current turn
+    private String turn;
 
     private Random rand;
     private TicTacToeAI ai;
@@ -69,19 +69,19 @@ public class MainActivity extends AppCompatActivity {
         int y = Integer.valueOf(id.substring(2, 3));
 
         // Do not allow overwrites
-        if (grid.getCoord(x, y) != 0) return;
+        if (!grid.getCoord(x, y).isEmpty()) return;
 
         if (ai != null) {
-            ai.setLastMove(new int[]{x, y});
+            ai.updateLastMove(new int[]{x, y});
         }
 
         try {
-            if (turn == Grid.X && !winState) {
+            if (turn.equals(Grid.X) && !winState) {
                 InputStream stream = getAssets().open("X.png");
                 Drawable d = Drawable.createFromStream(stream, null);
                 imageButtons.get(x).get(y).setImageDrawable(d);
                 grid.setX(x, y);
-            } else if (turn == Grid.O && !winState) {
+            } else if (turn.equals(Grid.O) && !winState) {
                 InputStream stream = getAssets().open("O.png");
                 Drawable d = Drawable.createFromStream(stream, null);
                 imageButtons.get(x).get(y).setImageDrawable(d);
@@ -94,15 +94,15 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // Check for win condition
-        if (checkWin(turn) == turn) {
-            if (turn == Grid.O) message.setText("O wins!");
+        if (checkWin(turn).equals(turn)) {
+            if (turn.equals(Grid.O)) message.setText("O wins!");
             else message.setText("X wins!");
             winState = true;
             return;
         }
 
         // Change turns
-        if (turn == Grid.X) turn = Grid.O;
+        if (turn.equals(Grid.X)) turn = Grid.O;
         else turn = Grid.X;
     }
 
@@ -110,15 +110,15 @@ public class MainActivity extends AppCompatActivity {
      * Checks the grid for a win
      * @return 1 if X wins, 2 if O wins, 0 otherwise.
      */
-    private int checkWin(int player){
+    private String checkWin(String player){
         boolean win = false;
 
         // Check Horizontal
         for (int i = 0; i < 3; i++) {
-            if (grid.getCoord(i, 0) != player) continue;
+            if (!grid.getCoord(i, 0).equals(player)) continue;
             for (int j = 1; j < 3; j++){
                 // Next element in the row must match the previous row element as well as the right value.
-                win = grid.getCoord(i, j) == grid.getCoord(i, j - 1) && grid.getCoord(i, j) == player;
+                win = grid.getCoord(i, j).equals(grid.getCoord(i, j - 1)) && grid.getCoord(i, j).equals(player);
                 // Stop checking for a win if we hit a false
                 if (!win) break;
             }
@@ -128,10 +128,10 @@ public class MainActivity extends AppCompatActivity {
 
         // Check Vertical
         for (int i = 0; i < 3; i++) {
-            if (grid.getCoord(0, i) != player) continue;
+            if (!grid.getCoord(0, i).equals(player)) continue;
             for (int j = 1; j < 3; j++){
                 // The next element in the column must match the previous column element as well as the right value
-                win = grid.getCoord(j, i) == grid.getCoord(j - 1, i) && grid.getCoord(j, i) == player;
+                win = grid.getCoord(j, i).equals(grid.getCoord(j - 1, i)) && grid.getCoord(j, i).equals(player);
                 // Stop checking for a win if we hit a false
                 if (!win) break;
             }
@@ -141,20 +141,20 @@ public class MainActivity extends AppCompatActivity {
 
         // Check main diagonal
         for (int i = 1; i < 3; i++){
-            if (grid.getCoord(i - 1,  i - 1) != player) break;
-            win = grid.getCoord(i, i) == grid.getCoord(i - 1, i - 1) && grid.getCoord(i, i) == player;
+            if (!grid.getCoord(i - 1,  i - 1).equals(player)) break;
+            win = grid.getCoord(i, i).equals(grid.getCoord(i - 1, i - 1)) && grid.getCoord(i, i).equals(player);
         }
         if (win) return player;
 
         // Check the anti-diagonal
         for (int i = 1, j = 1; i < 3 && j >= 0; i++, j--){
-            if (grid.getCoord(i - 1, j + 1) != player) break;
-            win = grid.getCoord(i, j) == grid.getCoord(i - 1, j + 1) && grid.getCoord(i, j) == player;
+            if (!grid.getCoord(i - 1, j + 1).equals(player)) break;
+            win = grid.getCoord(i, j).equals(grid.getCoord(i - 1, j + 1)) && grid.getCoord(i, j).equals(player);
         }
         if (win) return player;
 
-        // Return 0 if no win
-        return 0;
+        // Return blank if no win
+        return "";
     }
 
     public void newGame(View view){
@@ -180,8 +180,8 @@ public class MainActivity extends AppCompatActivity {
         newGame(null);
         if (rand == null) rand = new Random();
         // Retrieve a new random num
-        int randomNum = rand.nextInt(1) + 1;
-        int aiPlayer = randomNum == Grid.X ? Grid.X : Grid.O;
+        int randomNum = rand.nextInt(1);
+        String aiPlayer = randomNum == 0 ? Grid.X : Grid.O;
 
         ai = new TicTacToeAI(aiPlayer, grid);
     }
