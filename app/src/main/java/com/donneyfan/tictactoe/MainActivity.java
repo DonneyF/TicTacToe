@@ -17,6 +17,7 @@ import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -25,8 +26,11 @@ public class MainActivity extends AppCompatActivity {
     // Integer to track the current turn
     private int turn;
 
+    private Random rand;
+    private TicTacToeAI ai;
+    boolean aiGameState;
+    private boolean winState;
     private LinkedList<LinkedList<ImageButton>> imageButtons;
-
     private TextView message;
 
     @Override
@@ -63,19 +67,29 @@ public class MainActivity extends AppCompatActivity {
         String id = view.getTag().toString();
         int x = Integer.valueOf(id.substring(0, 1));
         int y = Integer.valueOf(id.substring(2, 3));
+
+        // Do not allow overwrites
+        if (grid.getCoord(x, y) != 0) return;
+
+        if (ai != null) {
+            ai.setLastMove(new int[]{x, y});
+        }
+
         try {
-            if (turn == Grid.X) {
+            if (turn == Grid.X && !winState) {
                 InputStream stream = getAssets().open("X.png");
                 Drawable d = Drawable.createFromStream(stream, null);
                 imageButtons.get(x).get(y).setImageDrawable(d);
                 grid.setX(x, y);
-            } else if (turn == Grid.O) {
+            } else if (turn == Grid.O && !winState) {
                 InputStream stream = getAssets().open("O.png");
                 Drawable d = Drawable.createFromStream(stream, null);
                 imageButtons.get(x).get(y).setImageDrawable(d);
                 grid.setO(x, y);
             }
-        } catch (IOException e){
+
+            if (ai != null) ai.playMove();
+        } catch (Exception e){
             e.printStackTrace();
         }
 
@@ -83,6 +97,8 @@ public class MainActivity extends AppCompatActivity {
         if (checkWin(turn) == turn) {
             if (turn == Grid.O) message.setText("O wins!");
             else message.setText("X wins!");
+            winState = true;
+            return;
         }
 
         // Change turns
@@ -139,5 +155,34 @@ public class MainActivity extends AppCompatActivity {
 
         // Return 0 if no win
         return 0;
+    }
+
+    public void newGame(View view){
+        // Clear the board and reset the win state
+        grid.clear();
+        winState = false;
+        ai = null;
+
+        // Clear the images
+        for (LinkedList<ImageButton> currRow : imageButtons) {
+            for (ImageButton button : currRow) {
+                button.setImageResource(0);
+            }
+        }
+
+        message.setText("X to start.");
+    }
+
+    /*
+     * Sets up the aiGame.
+     */
+    public void aiGame(View view) {
+        newGame(null);
+        if (rand == null) rand = new Random();
+        // Retrieve a new random num
+        int randomNum = rand.nextInt(1) + 1;
+        int aiPlayer = randomNum == Grid.X ? Grid.X : Grid.O;
+
+        ai = new TicTacToeAI(aiPlayer, grid);
     }
 }

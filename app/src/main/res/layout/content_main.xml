@@ -128,10 +128,41 @@
         android:id="@+id/scoreText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
         android:text="X To Start"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:paddingLeft="4.0dip"
+        android:paddingTop="1.0dip"
+        android:paddingRight="4.0dip"
+        android:paddingBottom="1.0dip"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+
+        <Button
+            android:id="@+id/newGamebutton"
+            android:layout_width="0.0dip"
+            android:layout_height="fill_parent"
+            android:onClick="newGame"
+            android:layout_marginBottom="10dp"
+            android:layout_weight="1.0"
+            android:text="Start New Game" />
+
+        <Button
+            android:id="@+id/AIbutton"
+            android:layout_width="0.0dip"
+            android:layout_height="fill_parent"
+            android:onClick="aiGame"
+            android:layout_weight="1.0"
+            android:layout_marginBottom="10dp"
+            android:text="Start AI Game" />
+
+    </LinearLayout>
+
 
 </RelativeLayout>
