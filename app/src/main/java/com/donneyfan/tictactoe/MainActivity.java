@@ -101,6 +101,14 @@ public class MainActivity extends AppCompatActivity {
                     imageButtons.get(x).get(y).setImageDrawable(d);
                     grid.setO(x, y);
                 }
+
+                // Check AI Win
+
+                if (Grid.checkWin(grid, ai.player).equals(ai.player)) {
+                    message.setText(ai.player + " wins!");
+                    winState = true;
+                    return;
+                }
             }
         } catch (Exception e){
             e.printStackTrace();

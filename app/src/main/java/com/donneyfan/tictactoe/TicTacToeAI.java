@@ -23,7 +23,7 @@ public class TicTacToeAI {
     }
 
     public int[] playMove(Grid grid) {
-        minimax(grid, player);
+        minimax(grid, player, 0);
         return nextMove;
     }
 
@@ -31,8 +31,9 @@ public class TicTacToeAI {
         grid.setX(1, 1);
     }
 
-    public int minimax(Grid grid, String turn) {
-        if (grid.isFull()) return utility(grid);
+    public int minimax(Grid grid, String turn, int depth) {
+        if (grid.isFull()) return utility(grid, depth, turn);
+        depth++;
 
         LinkedList<Integer> scores = new LinkedList<>();
         LinkedList<int[]> moves = new LinkedList<>();
@@ -46,37 +47,31 @@ public class TicTacToeAI {
             if (turn.equals(Grid.X)) possibleState.setX(move[0], move[1]);
             else possibleState.setO(move[0], move[1]);
 
-            scores.add(minimax(possibleState, nextTurn));
+            scores.add(minimax(possibleState, nextTurn, depth));
             moves.add(move);
         }
 
         // Calculate the minimum and maximum calculation
 
+        if (depth == 2) {
+            String test = "test";
+        }
+
         // Get the maximum if the current turn is the AI
         int index = 0;
+        int counter = scores.get(0);
         if (turn.equals(player)) {
             // Get the index in the array of the largest score
-            int counter = scores.get(0);
             for (int i = 1; i < scores.size(); i++) {
-                if (i == scores.size()) break;
-                if (scores.get(i) == 10) {
-                    index = i;
-                    break;
-                }
                 if (scores.get(i) > counter) {
                     index = i;
                     counter = scores.get(i);
                 }
             }
+            // Minimize AI loss if it is the human's turn.
         } else {
             // Get the index in the array of the smallest score
-            int counter = scores.get(0);
             for (int i = 1; i < scores.size(); i++) {
-                if (i == scores.size()) break;
-                if (scores.get(i) == 10) {
-                    index = i;
-                    break;
-                }
                 if (scores.get(i) < counter) {
                     index = i;
                     counter = scores.get(i);
@@ -93,12 +88,12 @@ public class TicTacToeAI {
      * @param grid the current state of the board
      * @return 10 if it is a win for the AI. 0 if tie. -10 if loss.
      */
-    public int utility(Grid grid) {
-        String state = Grid.checkWin(grid, player);
+    public int utility(Grid grid, int depth, String turn) {
+        String state = Grid.checkWin(grid, turn);
         if (state.equals(player)) {
-            return 10;
+            return 10 - depth;
         } else if (state.equals("")) {
             return 0;
-        } else return -10;
+        } else return depth - 10;
     }
 }
