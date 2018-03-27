@@ -28,7 +28,6 @@ public class MainActivity extends AppCompatActivity {
 
     private Random rand;
     private TicTacToeAI ai;
-    boolean aiGameState;
     private boolean winState;
     private LinkedList<LinkedList<ImageButton>> imageButtons;
     private TextView message;
@@ -84,9 +83,17 @@ public class MainActivity extends AppCompatActivity {
                 grid.setO(x, y);
             }
 
+            // Check for win condition
+            if (Grid.checkWin(grid, turn)) {
+                if (turn.equals(Grid.O)) message.setText("O wins!");
+                else message.setText("X wins!");
+                winState = true;
+                return;
+            }
+
             // If the AI is initialized, play its move
             if (ai != null) {
-                int[] aiMove = ai.playMove(grid);
+                int[] aiMove = ai.playMove();
                 x = aiMove[0];
                 y = aiMove[1];
 
@@ -102,30 +109,18 @@ public class MainActivity extends AppCompatActivity {
                     grid.setO(x, y);
                 }
 
-                // Check AI Win
-
-                if (Grid.checkWin(grid, ai.player).equals(ai.player)) {
+                // Check for win condition
+                if (Grid.checkWin(grid, ai.player)) {
                     message.setText(ai.player + " wins!");
                     winState = true;
-                    return;
                 }
+            } else {
+                // Change turns if AI is not playing
+                if (turn.equals(Grid.X)) turn = Grid.O;
+                else turn = Grid.X;
             }
         } catch (Exception e){
             e.printStackTrace();
-        }
-
-        // Check for win condition
-        if (Grid.checkWin(grid, turn).equals(turn)) {
-            if (turn.equals(Grid.O)) message.setText("O wins!");
-            else message.setText("X wins!");
-            winState = true;
-            return;
-        }
-
-        // Change turns if AI is not playing
-        if (ai == null) {
-            if (turn.equals(Grid.X)) turn = Grid.O;
-            else turn = Grid.X;
         }
     }
 
@@ -152,15 +147,20 @@ public class MainActivity extends AppCompatActivity {
         newGame(null);
         if (rand == null) rand = new Random();
         // Retrieve a new random num
-        int randomNum = rand.nextInt(1);
+        int randomNum = rand.nextInt(2);
         String aiPlayer = randomNum == 0 ? Grid.X : Grid.O;
+
+        // X always starts
+        turn = Grid.X;
 
         if (aiPlayer.equals(Grid.X)) {
             view.setTag("1_1");
-            turn = Grid.X;
             changeGrid(view);
             message.setText("AI is playing as X");
-        } else message.setText("AI is playing as O");
+        } else {
+            message.setText("AI is playing as O");
+        }
+
         ai = new TicTacToeAI(aiPlayer, grid);
     }
 }

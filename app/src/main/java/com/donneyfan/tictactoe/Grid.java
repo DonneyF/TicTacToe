@@ -54,10 +54,6 @@ public class Grid {
         return grid[x][y];
     }
 
-    public String[][] getArr() {
-        return grid.clone();
-    }
-
     public Grid duplicate(){
         // Create a copy
 
@@ -74,7 +70,7 @@ public class Grid {
      * Checks the grid for a win
      * @return 1 if X wins, 2 if O wins, 0 otherwise.
      */
-    public static String checkWin(Grid grid, String player){
+    public static boolean checkWin(Grid grid, String player){
         boolean win = false;
 
         // Check Horizontal
@@ -87,7 +83,7 @@ public class Grid {
                 if (!win) break;
             }
             // Check if the current row has a win
-            if (win) return player;
+            if (win) return true;
         }
 
         // Check Vertical
@@ -100,7 +96,7 @@ public class Grid {
                 if (!win) break;
             }
             // Check if the current column has a win
-            if (win) return player;
+            if (win) return true;
         }
 
         // Check main diagonal
@@ -108,17 +104,15 @@ public class Grid {
             if (!grid.getCoord(i - 1,  i - 1).equals(player)) break;
             win = grid.getCoord(i, i).equals(grid.getCoord(i - 1, i - 1)) && grid.getCoord(i, i).equals(player);
         }
-        if (win) return player;
+        if (win) return true;
 
         // Check the anti-diagonal
         for (int i = 1, j = 1; i < 3 && j >= 0; i++, j--){
             if (!grid.getCoord(i - 1, j + 1).equals(player)) break;
             win = grid.getCoord(i, j).equals(grid.getCoord(i - 1, j + 1)) && grid.getCoord(i, j).equals(player);
         }
-        if (win) return player;
 
-        // Return blank if no win
-        return "";
+        return win;
     }
 
     public boolean isFull() {
@@ -128,5 +122,9 @@ public class Grid {
             }
         }
         return true;
+    }
+
+    public void setEmpty(int x, int y) {
+        grid[x][y] = "";
     }
 }

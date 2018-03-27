@@ -8,39 +8,36 @@ public class TicTacToeAI {
 
     private Grid grid;
     public String player;
-    private String turn;
+    public String opponent;
     private int[] nextMove;
 
     public TicTacToeAI(String player, Grid grid) {
         this.player = player;
         this.grid = grid;
+        opponent = player.equals(Grid.X) ? Grid.O : Grid.X;
 
         // Start turn if AI is X
         if (player.equals(Grid.X)) {
-            turn = Grid.X;
-            playStartingMoveX();
-        } else turn = Grid.O;
+            // Always start in the center.
+            grid.setX(1, 1);
+        }
     }
 
-    public int[] playMove(Grid grid) {
+    public int[] playMove() {
         minimax(grid, player, 0);
         return nextMove;
     }
 
-    public void playStartingMoveX() {
-        grid.setX(1, 1);
-    }
 
     public int minimax(Grid grid, String turn, int depth) {
-        if (grid.isFull()) return utility(grid, depth, turn);
+        if (grid.isFull()) return utility(grid, depth);
         depth++;
 
         LinkedList<Integer> scores = new LinkedList<>();
         LinkedList<int[]> moves = new LinkedList<>();
 
         // Populate all possible scores for this current state
-        ArrayList<int[]> possibleMoves = grid.availableMoves();
-        for (int[] move : possibleMoves) {
+        for (int[] move : grid.availableMoves()) {
             Grid possibleState = grid.duplicate();
             String nextTurn = turn.equals(Grid.X) ? Grid.O : Grid.X;
 
@@ -48,13 +45,8 @@ public class TicTacToeAI {
             else possibleState.setO(move[0], move[1]);
 
             scores.add(minimax(possibleState, nextTurn, depth));
+
             moves.add(move);
-        }
-
-        // Calculate the minimum and maximum calculation
-
-        if (depth == 2) {
-            String test = "test";
         }
 
         // Get the maximum if the current turn is the AI
@@ -88,12 +80,11 @@ public class TicTacToeAI {
      * @param grid the current state of the board
      * @return 10 if it is a win for the AI. 0 if tie. -10 if loss.
      */
-    public int utility(Grid grid, int depth, String turn) {
-        String state = Grid.checkWin(grid, turn);
-        if (state.equals(player)) {
+    public int utility(Grid grid, int depth) {
+        if (Grid.checkWin(grid, player)) {
             return 10 - depth;
-        } else if (state.equals("")) {
-            return 0;
-        } else return depth - 10;
+        } else if (Grid.checkWin(grid, opponent)) {
+            return depth - 10;
+        } else return 0;
     }
 }
